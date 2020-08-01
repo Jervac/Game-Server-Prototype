@@ -1,0 +1,35 @@
+package com.visionire.downtown.path;
+
+import com.google.gson.Gson;
+import com.visionire.downtown.obj.PathObject;
+import com.visionire.downtown.obj.WaypointObject;
+import com.visionire.downtown.util.Log;
+import com.visionire.downtown.util.Time;
+
+/**
+ *
+ * @author nickbabenko
+ */
+public class PathCalculator {
+    public static PathObject calculate(WaypointObject start_location, WaypointObject end_location) {
+        PathObject path = new PathObject();
+
+        double point_x = end_location.x()-start_location.x();
+        double point_y = end_location.y()-start_location.y();
+
+        double angle = Math.atan2(point_x, point_y);
+        int dist = (int) Math.sqrt(Math.pow(point_x,2) + Math.pow(point_y,2));
+        int length = (int)(dist/PathProperties.SPEED);
+        long now = Time.now();
+
+        Log.out(Log.DEBUG, "current time: " + now + " - " + length, PathCalculator.class);
+
+        start_location.worldTime(now).orientation(angle);
+        end_location.worldTime((now+length)).orientation(angle);
+
+        path.add(start_location);
+        path.add(end_location);
+
+        return path;
+    }
+}
